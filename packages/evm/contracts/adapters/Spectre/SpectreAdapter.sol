@@ -2,7 +2,7 @@
 pragma solidity ^0.8.20;
 
 import { Merkle } from "./lib/Merkle.sol";
-import { Receipt } from "../Electron/lib/Receipt.sol";
+import { Receipt } from "./lib/Receipt.sol";
 import { BlockHashAdapter } from "../BlockHashAdapter.sol";
 import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
 import { ISpectre } from "./interfaces/ISpectre.sol";
