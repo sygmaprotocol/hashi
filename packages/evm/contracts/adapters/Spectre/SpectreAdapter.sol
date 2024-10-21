@@ -70,7 +70,7 @@ contract SpectreAdapter is AccessControl, BlockHashAdapter {
         );
 
         if (!parsedReceipt.isValid) revert ErrorParseReceipt();
-        if (bytes32(parsedReceipt.topics[0]) != MESSAGE_DISPATCHED_EVENT_SIG) revert InvalidEventSignature();
+        if (parsedReceipt.topics[0] != MESSAGE_DISPATCHED_EVENT_SIG) revert InvalidEventSignature();
         if (parsedReceipt.eventSource != SOURCE_YAHO) revert InvalidEventSource();
 
         uint256 messageId = uint256(parsedReceipt.topics[1]);
