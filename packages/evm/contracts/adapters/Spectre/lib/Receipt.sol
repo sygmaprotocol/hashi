@@ -37,9 +37,9 @@ library Receipt {
         bytes memory value = MerklePatricia.VerifyEthereumProof(receiptsRoot, receiptProof, keys)[0].value;
 
         // https://eips.ethereum.org/EIPS/eip-2718
-        // There are 3 possible receipt types: Legacy, 0x01 or 0x02 (More types can be added in future EIPs)
+        // There are 3 possible receipt types: Legacy, 0x01 or 0x02 or 0x03 (More types can be added in future EIPs)
         uint256 offset;
-        if (value[0] == 0x01 || value[0] == 0x02) {
+        if (value[0] == 0x01 || value[0] == 0x02 || value[0] == 0x03) {
             // first byte represents the TransactionType
             offset = 1;
         } else if (value[0] >= 0xc0) {
