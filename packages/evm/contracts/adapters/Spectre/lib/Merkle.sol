@@ -13,13 +13,14 @@ library Merkle {
     function restoreMerkleRoot(
         bytes32[] memory branch,
         bytes32 leaf,
-        uint256 index
+        uint256 index,
+        uint256 depth
     ) internal pure returns (bytes32 root) {
         require(index < 2 ** branch.length, "invalid leaf index");
 
         bytes32 combineHash = leaf;
         uint256 curIndex = index;
-        for (uint256 i = 0; i < branch.length; ) {
+        for (uint256 i = 0; i < depth; ) {
             if (curIndex % 2 == 0) combineHash = sha256(bytes.concat(combineHash, branch[i]));
             else combineHash = sha256(bytes.concat(branch[i], combineHash));
 
@@ -40,9 +41,9 @@ library Merkle {
         uint64 txSlot,
         bytes32 headerRoot
     ) internal pure returns (bool) {
-        uint256 index;
+        uint256 gindex;
         if (txSlot == lcSlot) {
-            index = RECEIPT_ROOT_GINDEX;
+            gindex = RECEIPT_ROOT_GINDEX;
         } else if (lcSlot - txSlot <= SLOTS_PER_HISTORICAL_ROOT) {
             uint256[] memory blockRootsGindex = new uint256[](2);
             blockRootsGindex[0] = BLOCK_ROOTS_GINDEX;
@@ -53,14 +54,15 @@ library Merkle {
             receiptGindexes[2] = RECEIPT_ROOT_GINDEX;
 
             // BeaconBlock -> BeaconState -> HistoricalRoots -> BeaconBlock -> BeaconBody -> ExecutionPayload -> ReceiptsRoot
-            index = concatGindices(receiptGindexes);
+            gindex = concatGindices(receiptGindexes);
         } else if (lcSlot - txSlot > SLOTS_PER_HISTORICAL_ROOT) {
             revert("txSlot lags by >8192 blocks. Not supported.");
         } else {
             revert("txSlot can't be greater than lightclient slot");
         }
 
-        bytes32 computedRoot = restoreMerkleRoot(receiptsRootBranch, receiptsRoot, calculateIndex(index));
+        (uint256 index, uint256 depth) = calculateIndex(gindex);
+        bytes32 computedRoot = restoreMerkleRoot(receiptsRootBranch, receiptsRoot, index, depth);
         return computedRoot == headerRoot;
     }
 
@@ -99,8 +101,8 @@ library Merkle {
         return gindex;
     }
 
-    function calculateIndex(uint256 gindex) internal pure returns (uint256 index) {
-        uint256 depth = floorLog2(gindex);
+    function calculateIndex(uint256 gindex) internal pure returns (uint256 index, uint256 depth) {
+        depth = floorLog2(gindex);
         index = gindex % (2 ** depth);
     }
 
