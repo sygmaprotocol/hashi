@@ -59,10 +59,11 @@ library Receipt {
         RLPReader.RLPItem[] memory receiptItems = RLPReader.RLPItem(value.length - offset, memPtr).toList();
 
         if (receiptItems.length != 4) return parsedReceipt;
+        if (receiptItems[0].toUint() != 1) return parsedReceipt;
 
         RLPReader.RLPItem[] memory logs = receiptItems[3].toList();
-
         if (logIndex >= logs.length) return parsedReceipt;
+
         RLPReader.RLPItem[] memory targetLog = logs[logIndex].toList();
 
         // extract eventSource address
