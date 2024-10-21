@@ -3,11 +3,11 @@ pragma solidity ^0.8.20;
 
 import { Merkle } from "./lib/Merkle.sol";
 import { Receipt } from "./lib/Receipt.sol";
-import { BlockHashAdapter } from "../BlockHashAdapter.sol";
+import { Adapter } from "../Adapter.sol";
 import { AccessControl } from "@openzeppelin/contracts/access/AccessControl.sol";
 import { ISpectre } from "./interfaces/ISpectre.sol";
 
-contract SpectreAdapter is AccessControl, BlockHashAdapter {
+contract SpectreAdapter is AccessControl, Adapter {
     string public constant PROVIDER = "spectre";
 
     // keccak256("MessageDispatched(uint256,(uint256,uint256,uint256,address,address,bytes,address[],address[]))")
