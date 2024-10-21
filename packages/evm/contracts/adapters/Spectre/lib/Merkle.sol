@@ -56,8 +56,6 @@ library Merkle {
             index = concatGindices(receiptGindexes);
         } else if (lcSlot - txSlot > SLOTS_PER_HISTORICAL_ROOT) {
             revert("txSlot lags by >8192 blocks. Not supported.");
-        } else {
-            revert("txSlot can't be greater than lightclient slot");
         }
 
         bytes32 computedRoot = restoreMerkleRoot(receiptsRootBranch, receiptsRoot, calculateIndex(index));
@@ -75,9 +73,6 @@ library Merkle {
     }
 
     function bitLength(uint256 number) internal pure returns (uint256) {
-        if (number == 0) {
-            return 0;
-        }
         uint256 length = 0;
         while (number > 0) {
             length++;
@@ -87,16 +82,7 @@ library Merkle {
     }
 
     function calculateArrayGindex(uint256 elementIndex) internal pure returns (uint256) {
-        uint256 gindex = 1;
-        uint256 depth = 0;
-        while ((1 << depth) < SLOTS_PER_HISTORICAL_ROOT) {
-            depth++;
-        }
-
-        for (uint256 d = 0; d < depth; d++) {
-            gindex = (gindex << 1) | ((elementIndex >> (depth - d - 1)) & 1);
-        }
-        return gindex;
+        return SLOTS_PER_HISTORICAL_ROOT + (elementIndex % SLOTS_PER_HISTORICAL_ROOT);
     }
 
     function calculateIndex(uint256 gindex) internal pure returns (uint256 index) {

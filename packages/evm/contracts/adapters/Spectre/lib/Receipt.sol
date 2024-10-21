@@ -52,7 +52,7 @@ library Receipt {
         // memory pointer to the RLP Receipt
         uint256 memPtr;
         assembly {
-            memPtr := add(value, add(0x20, mul(0x01, offset)))
+            memPtr := add(value, add(0x20, offset))
         }
 
         // read Receipt as a list of RLPItem
