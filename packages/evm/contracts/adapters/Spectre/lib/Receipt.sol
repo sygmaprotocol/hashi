@@ -57,9 +57,9 @@ library Receipt {
 
         // read Receipt as a list of RLPItem
         RLPReader.RLPItem[] memory receiptItems = RLPReader.RLPItem(value.length - offset, memPtr).toList();
-
-        if (receiptItems.length != 4) return parsedReceipt;
+        // check receipt transaction is successful
         if (receiptItems[0].toUint() != 1) return parsedReceipt;
+        if (receiptItems.length != 4) return parsedReceipt;
 
         RLPReader.RLPItem[] memory logs = receiptItems[3].toList();
         if (logIndex >= logs.length) return parsedReceipt;
